@@ -1,0 +1,16 @@
+{
+  "framework": "react",
+  "typescript": true,
+  "projectName": "noise-generator-web",
+  "mode": "code-router",
+  "tailwind": true,
+  "packageManager": "npm",
+  "toolchain": "eslint+prettier",
+  "variableValues": {},
+  "git": true,
+  "version": 1,
+  "existingAddOns": [
+    "tanstack-query",
+    "shadcn"
+  ]
+}
