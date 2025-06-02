@@ -7,7 +7,7 @@ const toggleRecoding = async (filename: string) => {
     throw new Error('Filename must be a valid string');
   }
 
-  return fetcher<void>('/start-recording', {
+  return fetcher<void>('/toggle-recording', {
     method: 'POST',
     body: new URLSearchParams({
       filename: filename,
