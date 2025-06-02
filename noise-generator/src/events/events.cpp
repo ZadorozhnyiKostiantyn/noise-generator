@@ -41,7 +41,7 @@ void togglePlayback()
 {
   Serial.println("Toggling playback...");
   Serial.println("isPlaying: " + String(isPlaying ? "true" : "false"));
-  if (isPlaying)
+  if (isPlaying) 
   {
     stopPlayback();
   }
@@ -57,6 +57,7 @@ void togglePlayback()
     String currentFileDisplay = "> " + files[currentFileIndex];
     drawMessage(currentFileDisplay);
     startPlayback(currentFile);
+    updateActiveAudioId(currentFileIndex);
   }
 }
 
@@ -72,14 +73,22 @@ void recordingEvent(String filename)
 
 void audioEvent(int id)
 {
+  Serial.println("Audi event file id: " + String(id));
   currentFileIndex = id;
   togglePlayback();
-  digitalWrite(LED_BLUE, isPlaying ? HIGH : LOW);
 }
 
 void ultrasonicEvent(bool toggle)
 {
   isUltrasonic = toggle;
+  if (isUltrasonic)
+  {
+    startUltrasound();
+  }
+  else
+  {
+    stopUltrasound();
+  }
 }
 
 //
@@ -110,7 +119,8 @@ void handleRecordingToggle()
 {
   toggleRecording();
 
-  if(!isRecording) {
+  if (!isRecording)
+  {
     updateAudioFiles(getListFiles());
   }
 
@@ -176,11 +186,13 @@ void turnOffAllLeds()
   {
     digitalWrite(config.ledPin, LOW);
   }
-  if(isPlaying) {
+  if (isPlaying)
+  {
     stopPlayback();
   }
 
-  if(isRecording) {
+  if (isRecording)
+  {
     stopRecording();
   }
 }

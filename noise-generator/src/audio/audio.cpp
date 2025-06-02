@@ -3,6 +3,7 @@
 #include "events/events.h"
 #include "display/display.h"
 #include "wav/wav_utils.h"
+#include "server/server.h"
 #include <SD.h>
 #include "sd/sd_card.h"
 #include <driver/i2s.h>
@@ -54,20 +55,21 @@ void stopRecording()
     sleep(1);
     updateListFiles();
     drawCurrentFile(); 
+    updateAudioFiles(getListFiles());
 
     Serial.println("Stopping recording...");
     isRecording = false;
+    updateIsRecording(false);
 
-    if (recordingTaskHandle != nullptr)
-    {
-        vTaskSuspend(recordingTaskHandle);
-    }
+    // if (recordingTaskHandle != nullptr)
+    // {
+    //     vTaskSuspend(recordingTaskHandle);
+    // }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 void recordTask(void *param)
 {
-    // const char *filename = currentFilenameStr.c_str();
     const char *filename = (const char *)param;
     const int sampleRate = 16000;
     const int bitsPerSample = 12; // 12 біт для ADC
@@ -92,7 +94,7 @@ void recordTask(void *param)
     uint32_t bytesWritten = 0;
     uint32_t startMillis = millis();
 
-    while (isRecording && (millis() - startMillis < 15000)) // 15 секунд або прапорець
+    while (isRecording && (millis() - startMillis < 5000)) // 15 секунд або прапорець
     {
         uint16_t sample = analogRead(adcPin);                 // 0–4095
         int16_t signedSample = ((int32_t)sample - 2048) << 4; // перетворення в signed 16-bit
@@ -110,10 +112,12 @@ void recordTask(void *param)
     free((void*)filename);
     Serial.println("Recording stopped.");
     stopRecording();
+    vTaskSuspend(recordingTaskHandle);
 }
 
 void startRecording(String filename)
 {
+    updateIsRecording(true);
     drawMessage("Recording...");
     Serial.println("FIle name start recording: " + filename);
     isRecording = true;

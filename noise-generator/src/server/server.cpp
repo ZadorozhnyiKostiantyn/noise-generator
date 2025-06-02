@@ -68,6 +68,7 @@ String getFiles()
 // Функція для обробки запиту на відтворення файлу за id
 void handleTogglePlayback(AsyncWebServerRequest *request)
 {
+    Serial.println("handleTogglePlayback");
     if (!request->hasParam("id", true))
     {
         request->send(400, "text/plain", "Missing 'id' parameter");
@@ -75,6 +76,7 @@ void handleTogglePlayback(AsyncWebServerRequest *request)
     }
 
     int id = request->getParam("id", true)->value().toInt();
+    Serial.println("Audi event file id: " + String(id));
     std::vector<String> files = getListFiles(); // Отримання списку файлів
 
     if (id >= 0 && id < files.size())
@@ -87,14 +89,6 @@ void handleTogglePlayback(AsyncWebServerRequest *request)
         request->send(404, "text/plain", "File not found");
     }
 }
-
-// // Функція для обробки запиту на зупинку відтворення
-// void handleStopFile(AsyncWebServerRequest *request)
-// {
-//     // stopPlayback(); // Виклик функції для зупинки відтворення
-//     Serial.print("Stop play file");
-//     request->send(200, "text/plain", "Playback stopped.");
-// }
 
 void handleDeleteFile(AsyncWebServerRequest *request)
 {
@@ -142,7 +136,6 @@ void handleToggleRecording(AsyncWebServerRequest *request)
     String filename = request->getParam("filename", true)->value();
     Serial.print("Recording started: " + filename);
     recordingEvent(filename);
-    // startRecording(filename.c_str()); // Виклик функції для запису
     request->send(200, "text/plain", "");
 }
 
@@ -166,7 +159,6 @@ void handleToggleUltrasonic(AsyncWebServerRequest *request)
     else
     {
         Serial.println("Ultrasonic mode deactivated");
-        // stopPlayback(); // Зупинка будь-якого відтворення
     }
 
     ultrasonicEvent(ultrasonicMode);
